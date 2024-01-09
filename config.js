@@ -2,7 +2,7 @@ const firebase = require("firebase");
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDmInJF95yQqSqj8-xzlrRaGycrCQFYvEc",
+  apiKey: process.env.API_KEY,
   authDomain: "assignment-49ca6.firebaseapp.com",
   projectId: "assignment-49ca6",
   storageBucket: "assignment-49ca6.appspot.com",
@@ -13,6 +13,9 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig)
 const db = firebase.firestore()
-const User = db.collection("users")
-
-module.exports = User;
+const userService = db.collection("users")
+const admin = db.collection("admins")
+module.exports = {
+  userService,
+  admin
+};

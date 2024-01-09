@@ -1,20 +1,28 @@
-const userService = require("../../../config")
+const {userService} = require("../../../config")
 const { encryptPassword, decryptPassword }= require("../../../middlewares/bcrypt")
 const sessionManager = require("../../../middlewares/sessionManger")
+const imageUploadMiddleware = require("../../../middlewares/imageUploadHandler")
 
 const createUser = async(req, res, next) => {
-  let body = req.body;
-  const password = req.body.password;
-  delete body["password"];
-  const snapshot = await userService.where('email', '==', req.body.email).get();
-  if (!snapshot.empty) {
-    return next ("user already exist"); 
-  }  
-  let hash = await encryptPassword(password);
-  body = {...body,...{"password": hash}}
-  console.log(body);
-  await userService.add(body);
-  res.send("success");
+  try{
+    let body = req.body;
+    console.log(req.body);
+    const password = req.body.password;
+    delete body["password"];
+    const snapshot = await userService.where('email', '==', req.body.email).get();
+    if (!snapshot.empty) {
+      return next ("user already exist"); 
+    }  
+    let hash = await encryptPassword(password);
+    body = {...body,...{"password": hash}}
+    console.log(body);
+    const profileImageBuffer = await imageUploadMiddleware(req,res);
+    body = {...body,...{"password": hash},...{"profile": profileImageBuffer}}
+    await userService.add(body)
+    res.send("success");
+  } catch (error){
+    return next(error)
+  }
 };
 
 const login = async(req, res, next) => {

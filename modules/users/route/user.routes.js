@@ -6,7 +6,7 @@ const {authenticateAccessToken} = require("../../../middlewares/sessionManger")
 
 router.post(
   "/createUser",
-  validate(userValidation.createUser),
+  //validate(userValidation.createUser),
   userController.createUser
 );
 
